@@ -53,6 +53,9 @@ wayland_env() {
   # Hardware cursors not yet working on wlroots
   export WLR_NO_HARDWARE_CURSORS=1
 
+  # Workaround a bug causing no elements in Swing to be rendered.
+  export _JAVA_AWT_WM_NONREPARENTING=1
+
   # Try to use the ever-experimental vulkan renderer
   # TODO: re-enable this. Currently broken (https://github.com/swaywm/wlroots/issues/3290).
   #export WLR_RENDERER=vulkan

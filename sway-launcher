@@ -1,0 +1,105 @@
+#!/bin/bash
+
+# Starts sway using the most powerful graphic card available.
+
+# Returns the card file matching the given name substring.
+# E.g. find_card "Radeon R9 Fury" will return "card1", as /dev/dri/card1 is
+# mapped to the Radeon R9 Fury PCIe bus.
+find_card() {
+  graphic_bus=$(lspci -v | grep -i "controller:.*$1" | cut -d: -f1)
+  [[ -n "$graphic_bus" ]] && ls /dev/dri/by-path -l | grep card | grep "$graphic_bus" | cut -d/ -f2
+}
+
+user_env() {
+  # SSH
+  export SSH_AUTH_SOCK="$(mktemp -d /tmp/ssh-agent.XXXXXXXXXX)/agent"
+
+  # Nextcloud
+  export OWNCLOUD_HTTP2_ENABLED=1
+
+  # Debuginfod
+  export DEBUGINFOD_URLS="https://debuginfod.archlinux.org/"
+}
+
+# Sets up environment variable relative to wayland.
+wayland_env() {
+  local card="$1"
+
+  # Wl-roots
+  export WLR_DRM_DEVICES="/dev/dri/$card"
+
+  # Freedesktop
+  export XDG_CURRENT_DESKTOP=sway
+  export XDG_SESSION_DESKTOP=sway
+  export XDG_SESSION_TYPE=wayland
+
+  # Qt
+  export QT_QPA_PLATFORMTHEME=qt5ct
+  export QT_QPA_PLATFORM=wayland
+  export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+
+  # GTK
+  export GDK_BACKEND=wayland
+
+  # SDL
+  export SDL_VIDEODRIVER=wayland
+
+  # Firefox
+  export MOZ_ENABLE_WAYLAND=1
+  export MOZ_ACCELERATED=1
+  export MOZ_WEBRENDER=1
+  export MOZ_DRM_DEVICE="/dev/dri/$card"
+
+  # Hardware cursors not yet working on wlroots
+  export WLR_NO_HARDWARE_CURSORS=1
+
+  # Try to use the ever-experimental vulkan renderer
+  # TODO: re-enable this. Currently broken (https://github.com/swaywm/wlroots/issues/3290).
+  #export WLR_RENDERER=vulkan
+}
+
+nvidia_env() {
+  local card="$1"
+  export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/nvidia_icd.json"
+  export __GLX_VENDOR_LIBRARY_NAME="nvidia"
+  export GBM_BACKEND=nvidia-drm
+  export LIBVA_DRIVER_NAME=nvidia
+  export VDPAU_DRIVER=nvidia
+  wayland_env "$card"
+  user_env "$card"
+}
+
+amd_radeon_env() {
+  local card="$1"
+  export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+  export LIBVA_DRIVER_NAME=radeonsi
+  export VDPAU_DRIVER=radeonsi
+  wayland_env "$card"
+  user_env "$card"
+}
+
+intel_env() {
+  local card="$1"
+  export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/intel_icd.x86_64.json
+  export LIBVA_DRIVER_NAME=mesa
+  export VDPAU_DRIVER=mesa
+  wayland_env "$card"
+  user_env "$card"
+}
+
+find_best_card_and_export_env() {
+  card=$(find_card "Radeon RX")
+  [[ -n "$card" ]] && echo "Found Radeon RX card (/dev/dri/$card)" && amd_radeon_env "$card" && return 0
+
+  card=$(find_card "Nvidia")
+  [[ -n "$card" ]] && echo "Found Nvidia card (/dev/dri/$card)" && nvidia_env "$card" && return 0
+
+  card=$(find_card "Nvidia")
+  [[ -n "$card" ]] && echo "Found Intel card (/dev/dri/$card)" && intel_env "$card" && return 0
+
+  echo "Found no card" && wayland_env "card0" && user_env "card0"
+}
+
+find_best_card_and_export_env
+
+exec systemd-cat --identifier=sway sway --unsupported-gpu --verbose

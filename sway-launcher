@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 # Starts sway using the most powerful graphic card available.
 
@@ -68,6 +69,16 @@ nvidia_env() {
   export GBM_BACKEND=nvidia-drm
   export LIBVA_DRIVER_NAME=nvidia
   export VDPAU_DRIVER=nvidia
+  wayland_env "$card"
+  user_env "$card"
+}
+
+nouveau_env() {
+  local card="$1"
+  export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/nvidia_icd.json"
+  export GBM_BACKEND=nvidia-drm
+  export LIBVA_DRIVER_NAME=mesa
+  export VDPAU_DRIVER=mesa
   wayland_env "$card"
   user_env "$card"
 }

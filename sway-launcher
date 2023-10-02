@@ -33,6 +33,7 @@ wayland_env() {
   export XDG_CURRENT_DESKTOP=sway
   export XDG_SESSION_DESKTOP=sway
   export XDG_SESSION_TYPE=wayland
+  export XDG_RUNTIME_DIR=/run/user/1000
 
   # Qt
   export QT_QPA_PLATFORMTHEME=qt5ct

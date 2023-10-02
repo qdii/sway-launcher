@@ -109,7 +109,7 @@ find_best_card_and_export_env() {
   card=$(find_card "Nvidia")
   [[ -n "$card" ]] && echo "Found Nvidia card (/dev/dri/$card)" && nvidia_env "$card" && return 0
 
-  card=$(find_card "Nvidia")
+  card=$(find_card "UHD Graphics")
   [[ -n "$card" ]] && echo "Found Intel card (/dev/dri/$card)" && intel_env "$card" && return 0
 
   echo "Found no card" && wayland_env "card0" && user_env "card0"

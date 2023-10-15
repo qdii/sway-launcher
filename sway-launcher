@@ -43,8 +43,8 @@ wayland_env() {
   # GTK
   export GDK_BACKEND=wayland
 
-  # SDL
-  export SDL_VIDEODRIVER=wayland
+  # SDL (falls back to XWayland on SDL2)
+  export SDL_VIDEODRIVER="wayland,x11"
 
   # Firefox
   export MOZ_ENABLE_WAYLAND=1

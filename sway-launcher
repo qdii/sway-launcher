@@ -35,6 +35,9 @@ wayland_env() {
   export XDG_SESSION_TYPE=wayland
   export XDG_RUNTIME_DIR=/run/user/1000
 
+  # Clutter
+  export CLUTTER_BACKEND=wayland
+
   # Qt
   export QT_QPA_PLATFORMTHEME=qt5ct
   export QT_QPA_PLATFORM=wayland

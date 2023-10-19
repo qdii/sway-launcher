@@ -20,6 +20,10 @@ user_env() {
 
   # Debuginfod
   export DEBUGINFOD_URLS="https://debuginfod.archlinux.org/"
+
+  # Distributed compilation
+  export DISTCC_HOSTS="192.168.2.20,cpp,lzo 192.168.2.31,cpp,lzo"
+  eval $(pump --startup)
 }
 
 # Sets up environment variable relative to wayland.

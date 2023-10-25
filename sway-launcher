@@ -22,7 +22,7 @@ user_env() {
   export DEBUGINFOD_URLS="https://debuginfod.archlinux.org/"
 
   # Distributed compilation
-  export DISTCC_HOSTS="192.168.2.31,cpp,lzo 192.168.2.20,cpp,lzo"
+  export DISTCC_HOSTS="192.168.2.31,cpp,lzo 192.168.2.20,cpp,lzo, localhost/8"
   eval $(pump --startup)
 }
 

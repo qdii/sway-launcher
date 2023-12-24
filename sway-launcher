@@ -24,6 +24,9 @@ user_env() {
   # Distributed compilation
   export DISTCC_HOSTS="192.168.2.31,cpp,lzo 192.168.2.20,cpp,lzo localhost/8"
   eval $(pump --startup)
+
+  # Prevent fapi from writing useless warnings.
+  export TSS2_LOG=fapi+NONE
 }
 
 # Sets up environment variable relative to wayland.

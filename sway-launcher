@@ -1,6 +1,4 @@
 #!/bin/bash
-set -x
-
 # Starts sway using the most powerful graphic card available.
 
 # Returns the card file matching the given name substring.

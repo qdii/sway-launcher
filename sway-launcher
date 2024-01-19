@@ -25,6 +25,9 @@ user_env() {
 
   # Prevent fapi from writing useless warnings.
   export TSS2_LOG=fapi+NONE
+
+  # Color GCC with Nord Theme colors
+  export GCC_COLORS="error=01;131:warning=01;222:note=01;109:caret=01;110:locus=23:quote=23"
 }
 
 # Sets up environment variable relative to wayland.

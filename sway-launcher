@@ -48,8 +48,9 @@ wayland_env() {
 
   # Qt (or xcb if wayland is not available)
   export QT_QPA_PLATFORM="wayland;xcb"
-  export QT_STYLE_OVERRIDE=kvantum
-  export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+  export QT_QPA_PLATFORMTHEME="gtk2"
+  export QT_STYLE_OVERRIDE="gtk2"
+  export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
 
   # GTK
   export GDK_BACKEND=wayland

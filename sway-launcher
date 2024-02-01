@@ -53,7 +53,7 @@ wayland_env() {
 
   # GTK
   export GDK_BACKEND=wayland
-  export GTK_THEME=Arc-Dark
+  export GTK_THEME=Nordic
 
   # SDL (falls back to XWayland on SDL2)
   export SDL_VIDEODRIVER="wayland,x11"
